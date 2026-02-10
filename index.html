@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>출석 체크</title>
+  <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+          font-family: -apple-system, sans-serif;
+          /* 연한 핑크 그라데이션 테마 */
+          background: linear-gradient(135deg, #FFF1F2 0%, #FFE4E6 100%);
+          min-height: 100vh;
+          display: flex; justify-content: center; align-items: center; padding: 20px;
+      }
+      .container {
+          max-width: 400px; width: 100%; background: white;
+          border-radius: 20px; padding: 40px; text-align: center;
+          box-shadow: 0 15px 35px rgba(251, 113, 133, 0.2);
+      }
+      h1 { color: #9D174D; margin-bottom: 10px; font-size: 24px; }
+      p { color: #BE185D; margin-bottom: 30px; font-size: 14px; opacity: 0.8; }
+      input[type="text"] {
+          width: 100%; padding: 15px; border: 2px solid #FECDD3;
+          border-radius: 12px; font-size: 18px; margin-bottom: 20px; 
+          text-align: center; outline: none; transition: 0.3s;
+      }
+      input[type="text"]:focus { border-color: #FB7185; box-shadow: 0 0 0 4px rgba(251, 113, 133, 0.1); }
+      .btn-submit {
+          width: 100%; padding: 16px; background: #FB7185; color: white;
+          border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer;
+          transition: 0.3s;
+      }
+      .btn-submit:hover { background: #F43F5E; transform: translateY(-2px); }
+      #resultMessage {
+          margin-top: 25px; padding: 15px; border-radius: 12px; display: none;
+          line-height: 1.6; font-size: 14px;
+      }
+      .status-normal { background: #FFF1F2; color: #9D174D; }
+      .status-alert { background: #FEF2F2; color: #991B1B; border: 1px solid #FCA5A5; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌸 출석 체크</h1>
+    <p>오늘도 환영합니다! 성함을 입력해주세요.</p>
+    
+    <input type="text" id="userName" placeholder="이름 입력" autofocus>
+    <button class="btn-submit" id="attendBtn">출석하기</button>
+
+    <div id="resultMessage"></div>
+  </div>
+
+  <script>
+    const scriptUrl = 'YOUR_APPS_SCRIPT_URL';
+
+    document.getElementById('attendBtn').addEventListener('click', async () => {
+      const name = document.getElementById('userName').value.trim();
+      const resultDiv = document.getElementById('resultMessage');
+      
+      if (!name) { alert('이름을 입력해주세요.'); return; }
+
+      resultDiv.style.display = 'block';
+      resultDiv.className = 'status-normal';
+      resultDiv.innerText = '⏳ 출석 기록 중...';
+
+      try {
+        const response = await fetch(scriptUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: JSON.stringify({ name: name })
+        });
+
+        resultDiv.className = 'status-normal';
+        resultDiv.innerHTML = `✅ <strong>${name}</strong>님, 출석 완료!<br>오늘도 즐거운 시간 되세요!`;
+        document.getElementById('userName').value = '';
+        
+      } catch (e) {
+        resultDiv.className = 'status-alert';
+        resultDiv.innerText = '❌ 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+      }
+    });
+  </script>
+</body>
+</html>
