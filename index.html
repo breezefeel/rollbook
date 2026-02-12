@@ -13,14 +13,12 @@
           display: flex; justify-content: center; align-items: center; padding: 15px;
       }
       .container {
-          max-width: 450px; /* 폭을 적절히 줄임 */
-          width: 100%; background: white;
+          max-width: 450px; width: 100%; background: white;
           border-radius: 25px; padding: 45px 30px; text-align: center;
           box-shadow: 0 15px 35px rgba(251, 113, 133, 0.2);
       }
       h1 { color: #9D174D; margin-bottom: 10px; font-size: 32px; font-weight: 800; }
       p { color: #BE185D; margin-bottom: 35px; font-size: 18px; font-weight: 500; opacity: 0.9; }
-      
       input[type="text"] {
           width: 100%; padding: 20px; border: 2.5px solid #FECDD3;
           border-radius: 15px; font-size: 24px; margin-bottom: 20px; 
@@ -28,14 +26,11 @@
           background-color: #FFF9FA; color: #1e293b;
       }
       input[type="text"]:focus { border-color: #FB7185; background-color: #ffffff; }
-      
       .btn-submit {
           width: 100%; padding: 20px; background: #FB7185; color: white;
           border: none; border-radius: 15px; font-size: 22px; font-weight: 700;
           cursor: pointer; transition: 0.3s; box-shadow: 0 8px 15px rgba(251, 113, 133, 0.2);
       }
-      .btn-submit:hover { background: #F43F5E; transform: translateY(-2px); }
-      
       #resultMessage {
           margin-top: 30px; padding: 20px; border-radius: 15px; display: none;
           line-height: 1.6; font-size: 18px; font-weight: 600;
@@ -48,10 +43,8 @@
   <div class="container">
     <h1>🌸 출석 체크</h1>
     <p>성함을 입력하고 버튼을 눌러주세요</p>
-    
     <input type="text" id="userName" placeholder="이름 입력" lang="ko" spellcheck="false" autocomplete="off" autofocus>
     <button class="btn-submit" id="attendBtn">출석 완료</button>
-
     <div id="resultMessage"></div>
   </div>
 
@@ -61,7 +54,6 @@
     document.getElementById('attendBtn').addEventListener('click', async () => {
       const name = document.getElementById('userName').value.trim();
       const resultDiv = document.getElementById('resultMessage');
-      
       if (!name) { alert('성함을 입력해 주세요!'); return; }
 
       resultDiv.style.display = 'block';
@@ -72,22 +64,10 @@
       const timeStr = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()} ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
 
       try {
-        await fetch(scriptUrl, {
-          method: 'POST',
-          mode: 'no-cors',
-          body: JSON.stringify({ name: name })
-        });
-
-        resultDiv.innerHTML = `
-          ✅ <strong>${name}</strong>님, 출석 완료!<br>
-          오늘도 즐거운 시간 되세요!<br>
-          <span class="time-info">🕒 일시: ${timeStr}</span>
-        `;
+        await fetch(scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ name: name }) });
+        resultDiv.innerHTML = `✅ <strong>${name}</strong>님, 출석 완료!<br>오늘도 즐거운 시간 되세요!<br><span class="time-info">🕒 일시: ${timeStr}</span>`;
         document.getElementById('userName').value = '';
-        
-      } catch (e) {
-        resultDiv.innerText = '❌ 오류가 발생했습니다.';
-      }
+      } catch (e) { resultDiv.innerText = '❌ 오류가 발생했습니다.'; }
     });
   </script>
 </body>
