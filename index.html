@@ -10,59 +10,73 @@
           font-family: -apple-system, sans-serif;
           background: linear-gradient(135deg, #FFF1F2 0%, #FFE4E6 100%);
           min-height: 100vh;
-          display: flex; justify-content: center; align-items: center; padding: 20px;
+          display: flex; justify-content: center; align-items: center; padding: 15px;
       }
       .container {
-          max-width: 400px; width: 100%; background: white;
-          border-radius: 20px; padding: 40px; text-align: center;
-          box-shadow: 0 15px 35px rgba(251, 113, 133, 0.2);
+          max-width: 500px; /* 폭을 넓힘 */
+          width: 100%; background: white;
+          border-radius: 30px; padding: 60px 40px; /* 상하 여백 확대 */
+          text-align: center;
+          box-shadow: 0 20px 50px rgba(251, 113, 133, 0.25);
       }
-      h1 { color: #9D174D; margin-bottom: 10px; font-size: 24px; }
-      p { color: #BE185D; margin-bottom: 30px; font-size: 14px; opacity: 0.8; }
+      h1 { color: #9D174D; margin-bottom: 15px; font-size: 36px; font-weight: 800; }
+      p { color: #BE185D; margin-bottom: 40px; font-size: 20px; font-weight: 500; }
+      
       input[type="text"] {
-          width: 100%; padding: 15px; border: 2px solid #FECDD3;
-          border-radius: 12px; font-size: 18px; margin-bottom: 20px; 
+          width: 100%; padding: 25px; /* 입력창 크게 */
+          border: 3px solid #FECDD3;
+          border-radius: 20px; font-size: 28px; /* 폰트 크게 */
+          margin-bottom: 25px; 
           text-align: center; outline: none; transition: 0.3s;
+          background-color: #FFF9FA;
       }
-      input[type="text"]:focus { border-color: #FB7185; box-shadow: 0 0 0 4px rgba(251, 113, 133, 0.1); }
+      input[type="text"]:focus { border-color: #FB7185; background-color: #white; }
+      
       .btn-submit {
-          width: 100%; padding: 16px; background: #FB7185; color: white;
-          border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer;
-          transition: 0.3s;
+          width: 100%; padding: 25px; /* 버튼 크게 */
+          background: #FB7185; color: white;
+          border: none; border-radius: 20px; 
+          font-size: 26px; font-weight: 700; cursor: pointer;
+          transition: 0.3s; box-shadow: 0 8px 15px rgba(251, 113, 133, 0.3);
       }
-      .btn-submit:hover { background: #F43F5E; transform: translateY(-2px); }
+      .btn-submit:hover { background: #F43F5E; transform: translateY(-3px); }
+      
       #resultMessage {
-          margin-top: 25px; padding: 15px; border-radius: 12px; display: none;
-          line-height: 1.6; font-size: 14px;
+          margin-top: 35px; padding: 25px; border-radius: 20px; display: none;
+          line-height: 1.8; font-size: 20px;
       }
-      .status-normal { background: #FFF1F2; color: #9D174D; }
-      .status-alert { background: #FEF2F2; color: #991B1B; border: 1px solid #FCA5A5; }
+      .status-normal { background: #FFF1F2; color: #9D174D; border: 2px solid #FB7185; }
+      .time-display { display: block; margin-top: 10px; font-size: 18px; color: #BE185D; opacity: 0.8; }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🌸 출석 체크</h1>
-    <p>오늘도 환영합니다! 성함을 입력해주세요.</p>
+    <p>오늘도 환영합니다!<br>성함을 입력하고 버튼을 눌러주세요.</p>
     
-    <input type="text" id="userName" placeholder="이름 입력" autofocus>
-    <button class="btn-submit" id="attendBtn">출석하기</button>
+    <input type="text" id="userName" placeholder="이름을 적어주세요" autofocus>
+    <button class="btn-submit" id="attendBtn">지금 출석하기</button>
 
     <div id="resultMessage"></div>
   </div>
 
   <script>
-    // ▼ 여기에 보내주신 최신 배포 주소를 적용했습니다.
     const scriptUrl = 'https://script.google.com/macros/s/AKfycbwvk-JPN5usw6vAsUbyXWGUnUYFUWNcwXx6sQ6V1WBz9596pz3ifw2Ild-TqMs4HkqQOg/exec';
 
     document.getElementById('attendBtn').addEventListener('click', async () => {
       const name = document.getElementById('userName').value.trim();
       const resultDiv = document.getElementById('resultMessage');
       
-      if (!name) { alert('이름을 입력해주세요.'); return; }
+      if (!name) { alert('성함을 입력해주세요!'); return; }
 
       resultDiv.style.display = 'block';
       resultDiv.className = 'status-normal';
-      resultDiv.innerText = '⏳ 출석 기록 중...';
+      resultDiv.innerText = '⏳ 출석 정보를 전송 중입니다...';
+
+      // 현재 시간 생성
+      const now = new Date();
+      const timeString = now.getFullYear() + "-" + (now.getMonth()+1) + "-" + now.getDate() + " " + 
+                         now.getHours() + ":" + String(now.getMinutes()).padStart(2, '0');
 
       try {
         await fetch(scriptUrl, {
@@ -71,14 +85,17 @@
           body: JSON.stringify({ name: name })
         });
 
-        // 전송 완료 후 메시지
-        resultDiv.className = 'status-normal';
-        resultDiv.innerHTML = `✅ <strong>${name}</strong>님, 출석 완료!<br>오늘도 즐거운 시간 되세요!`;
+        resultDiv.innerHTML = `
+          ✅ <strong>${name}</strong>님, 출석 완료!<br>
+          오늘도 즐거운 시간 되세요!<br>
+          <span class="time-display">🕒 출석 일시: ${timeString}</span>
+        `;
         document.getElementById('userName').value = '';
         
       } catch (e) {
-        resultDiv.className = 'status-alert';
-        resultDiv.innerText = '❌ 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+        resultDiv.style.backgroundColor = '#FEF2F2';
+        resultDiv.style.color = '#991B1B';
+        resultDiv.innerText = '❌ 통신 오류가 발생했습니다. 다시 시도해주세요.';
       }
     });
   </script>
