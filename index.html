@@ -8,7 +8,6 @@
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body {
           font-family: -apple-system, sans-serif;
-          /* 연한 핑크 그라데이션 테마 */
           background: linear-gradient(135deg, #FFF1F2 0%, #FFE4E6 100%);
           min-height: 100vh;
           display: flex; justify-content: center; align-items: center; padding: 20px;
@@ -52,7 +51,8 @@
   </div>
 
   <script>
-    const scriptUrl = 'YOUR_APPS_SCRIPT_URL';
+    // ▼ 여기에 보내주신 최신 배포 주소를 적용했습니다.
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbwvk-JPN5usw6vAsUbyXWGUnUYFUWNcwXx6sQ6V1WBz9596pz3ifw2Ild-TqMs4HkqQOg/exec';
 
     document.getElementById('attendBtn').addEventListener('click', async () => {
       const name = document.getElementById('userName').value.trim();
@@ -65,12 +65,13 @@
       resultDiv.innerText = '⏳ 출석 기록 중...';
 
       try {
-        const response = await fetch(scriptUrl, {
+        await fetch(scriptUrl, {
           method: 'POST',
           mode: 'no-cors',
           body: JSON.stringify({ name: name })
         });
 
+        // 전송 완료 후 메시지
         resultDiv.className = 'status-normal';
         resultDiv.innerHTML = `✅ <strong>${name}</strong>님, 출석 완료!<br>오늘도 즐거운 시간 되세요!`;
         document.getElementById('userName').value = '';
