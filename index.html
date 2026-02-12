@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,76 +7,74 @@
   <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body {
-          font-family: -apple-system, sans-serif;
+          font-family: -apple-system, 'Malgun Gothic', sans-serif;
           background: linear-gradient(135deg, #FFF1F2 0%, #FFE4E6 100%);
           min-height: 100vh;
-          display: flex; justify-content: center; align-items: center; padding: 15px;
+          display: flex; justify-content: center; align-items: center; padding: 10px;
       }
       .container {
-          max-width: 500px; /* 폭을 넓힘 */
-          width: 100%; background: white;
-          border-radius: 30px; padding: 60px 40px; /* 상하 여백 확대 */
-          text-align: center;
-          box-shadow: 0 20px 50px rgba(251, 113, 133, 0.25);
+          max-width: 600px; width: 100%; background: white;
+          border-radius: 40px; padding: 80px 40px; text-align: center;
+          box-shadow: 0 30px 60px rgba(251, 113, 133, 0.3);
       }
-      h1 { color: #9D174D; margin-bottom: 15px; font-size: 36px; font-weight: 800; }
-      p { color: #BE185D; margin-bottom: 40px; font-size: 20px; font-weight: 500; }
+      h1 { color: #9D174D; margin-bottom: 20px; font-size: 48px; font-weight: 900; }
+      p { color: #BE185D; margin-bottom: 50px; font-size: 24px; font-weight: 600; opacity: 0.9; }
       
       input[type="text"] {
-          width: 100%; padding: 25px; /* 입력창 크게 */
-          border: 3px solid #FECDD3;
-          border-radius: 20px; font-size: 28px; /* 폰트 크게 */
-          margin-bottom: 25px; 
+          width: 100%; padding: 35px; border: 4px solid #FECDD3;
+          border-radius: 25px; font-size: 40px; margin-bottom: 30px; 
           text-align: center; outline: none; transition: 0.3s;
-          background-color: #FFF9FA;
+          background-color: #FFF9FA; color: #1e293b;
       }
-      input[type="text"]:focus { border-color: #FB7185; background-color: #white; }
+      input[type="text"]:focus { border-color: #FB7185; background-color: #ffffff; transform: scale(1.02); }
       
       .btn-submit {
-          width: 100%; padding: 25px; /* 버튼 크게 */
-          background: #FB7185; color: white;
-          border: none; border-radius: 20px; 
-          font-size: 26px; font-weight: 700; cursor: pointer;
-          transition: 0.3s; box-shadow: 0 8px 15px rgba(251, 113, 133, 0.3);
+          width: 100%; padding: 35px; background: #FB7185; color: white;
+          border: none; border-radius: 25px; font-size: 36px; font-weight: 800;
+          cursor: pointer; transition: 0.3s; box-shadow: 0 12px 20px rgba(251, 113, 133, 0.4);
       }
-      .btn-submit:hover { background: #F43F5E; transform: translateY(-3px); }
+      .btn-submit:hover { background: #F43F5E; transform: translateY(-5px); }
       
       #resultMessage {
-          margin-top: 35px; padding: 25px; border-radius: 20px; display: none;
-          line-height: 1.8; font-size: 20px;
+          margin-top: 40px; padding: 30px; border-radius: 25px; display: none;
+          line-height: 1.6; font-size: 24px; font-weight: 700;
       }
-      .status-normal { background: #FFF1F2; color: #9D174D; border: 2px solid #FB7185; }
-      .time-display { display: block; margin-top: 10px; font-size: 18px; color: #BE185D; opacity: 0.8; }
+      .status-normal { background: #FFF1F2; color: #9D174D; border: 3px solid #FB7185; }
+      .time-info { display: block; margin-top: 15px; font-size: 20px; color: #BE185D; font-weight: 400; }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🌸 출석 체크</h1>
-    <p>오늘도 환영합니다!<br>성함을 입력하고 버튼을 눌러주세요.</p>
+    <p>성함을 입력하고 버튼을 눌러주세요</p>
     
-    <input type="text" id="userName" placeholder="이름을 적어주세요" autofocus>
-    <button class="btn-submit" id="attendBtn">지금 출석하기</button>
+    <input type="text" id="userName" 
+           placeholder="이름 입력" 
+           lang="ko" 
+           spellcheck="false" 
+           autocomplete="off" 
+           autofocus>
+           
+    <button class="btn-submit" id="attendBtn">출석 완료</button>
 
     <div id="resultMessage"></div>
   </div>
 
   <script>
-    const scriptUrl = 'https://script.google.com/macros/s/AKfycbweNqZrvKYvJ2R2u34TK6oFcVbcN909A3mq3rkyCKjzjiEEf6LIaVn-3GyVlnw4DCAYaQ/exec';
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbwvk-JPN5usw6vAsUbyXWGUnUYFUWNcwXx6sQ6V1WBz9596pz3ifw2Ild-TqMs4HkqQOg/exec';
 
     document.getElementById('attendBtn').addEventListener('click', async () => {
       const name = document.getElementById('userName').value.trim();
       const resultDiv = document.getElementById('resultMessage');
       
-      if (!name) { alert('성함을 입력해주세요!'); return; }
+      if (!name) { alert('성함을 입력해 주세요!'); return; }
 
       resultDiv.style.display = 'block';
       resultDiv.className = 'status-normal';
-      resultDiv.innerText = '⏳ 출석 정보를 전송 중입니다...';
+      resultDiv.innerText = '⏳ 출석을 기록하고 있습니다...';
 
-      // 현재 시간 생성
       const now = new Date();
-      const timeString = now.getFullYear() + "-" + (now.getMonth()+1) + "-" + now.getDate() + " " + 
-                         now.getHours() + ":" + String(now.getMinutes()).padStart(2, '0');
+      const timeStr = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()} ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
 
       try {
         await fetch(scriptUrl, {
@@ -87,15 +85,13 @@
 
         resultDiv.innerHTML = `
           ✅ <strong>${name}</strong>님, 출석 완료!<br>
-          오늘도 즐거운 시간 되세요!<br>
-          <span class="time-display">🕒 출석 일시: ${timeString}</span>
+          좋은 하루 보내세요!<br>
+          <span class="time-info">🕒 일시: ${timeStr}</span>
         `;
         document.getElementById('userName').value = '';
         
       } catch (e) {
-        resultDiv.style.backgroundColor = '#FEF2F2';
-        resultDiv.style.color = '#991B1B';
-        resultDiv.innerText = '❌ 통신 오류가 발생했습니다. 다시 시도해주세요.';
+        resultDiv.innerText = '❌ 통신 장애가 발생했습니다.';
       }
     });
   </script>
