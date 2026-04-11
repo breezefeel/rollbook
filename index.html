@@ -5,96 +5,97 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>출석 체크</title>
   <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body {
-          font-family: -apple-system, 'Malgun Gothic', sans-serif;
-          background: linear-gradient(135deg, #FFF1F2 0%, #FFE4E6 100%);
-          min-height: 100vh;
-          display: flex; justify-content: center; align-items: center; padding: 15px;
-      }
-      .container {
-          max-width: 450px; width: 100%; background: white;
-          border-radius: 25px; padding: 45px 30px; text-align: center;
-          box-shadow: 0 15px 35px rgba(251, 113, 133, 0.2);
-      }
-      h1 { color: #9D174D; margin-bottom: 10px; font-size: 32px; font-weight: 800; }
-      p { color: #BE185D; margin-bottom: 35px; font-size: 18px; font-weight: 500; opacity: 0.9; }
-      input[type="text"] {
-          width: 100%; padding: 20px; border: 2.5px solid #FECDD3;
-          border-radius: 15px; font-size: 24px; margin-bottom: 20px; 
-          text-align: center; outline: none; transition: 0.3s;
-          background-color: #FFF9FA; color: #1e293b;
-      }
-      input[type="text"]:focus { border-color: #FB7185; background-color: #ffffff; }
-      .btn-submit {
-          width: 100%; padding: 20px; background: #FB7185; color: white;
-          border: none; border-radius: 15px; font-size: 22px; font-weight: 700;
-          cursor: pointer; transition: 0.3s; box-shadow: 0 8px 15px rgba(251, 113, 133, 0.2);
-      }
-      #resultMessage {
-          margin-top: 30px; padding: 20px; border-radius: 15px; display: none;
-          line-height: 1.6; font-size: 18px; font-weight: 600;
-      }
-      .status-normal { background: #FFF1F2; color: #9D174D; border: 2px solid #FB7185; }
-      .time-info { display: block; margin-top: 8px; font-size: 15px; color: #BE185D; font-weight: 400; }
+    /* 기존 스타일 유지 */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, 'Malgun Gothic', sans-serif; background: linear-gradient(135deg, #FFF1F2 0%, #FFE4E6 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 15px; }
+    .container { max-width: 450px; width: 100%; background: white; border-radius: 25px; padding: 45px 30px; text-align: center; box-shadow: 0 15px 35px rgba(251, 113, 133, 0.2); }
+    h1 { color: #9D174D; margin-bottom: 10px; font-size: 32px; font-weight: 800; }
+    input[type="text"] { width: 100%; padding: 20px; border: 2.5px solid #FECDD3; border-radius: 15px; font-size: 24px; margin-bottom: 20px; text-align: center; outline: none; background-color: #FFF9FA; }
+    .btn-submit { width: 100%; padding: 20px; background: #FB7185; color: white; border: none; border-radius: 15px; font-size: 22px; font-weight: 700; cursor: pointer; }
+    
+    /* 팝업 모달 스타일 */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
+    .modal-content { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; }
+    .modal-content p { font-size: 18px; line-height: 1.5; color: #4b5563; margin-bottom: 25px; }
+    .modal-btns { display: flex; flex-direction: column; gap: 10px; }
+    .modal-btns button { padding: 12px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .btn-yes { background: #E0F2FE; color: #0369A1; } /* 연장 - 파랑 */
+    .btn-no { background: #FEE2E2; color: #B91C1C; }  /* 아니요 - 빨강 */
+    .btn-maybe { background: #F3F4F6; color: #374151; }
   </style>
 </head>
 <body>
+
   <div class="container">
     <h1>🌸 출석 체크</h1>
-    <p>성함을 입력하고 버튼을 눌러주세요</p>
-    <input type="text" id="userName" placeholder="이름 입력" lang="ko" spellcheck="false" autocomplete="off" autofocus>
+    <p style="color: #BE185D; margin-bottom:35px;">성함을 입력하고 버튼을 눌러주세요</p>
+    <input type="text" id="userName" placeholder="이름 입력" autocomplete="off">
     <button class="btn-submit" id="attendBtn">출석 하기</button>
-    <div id="resultMessage"></div>
+    <div id="resultMessage" style="margin-top:20px; display:none; font-weight:600;"></div>
+  </div>
+
+  <div id="infoModal" class="modal">
+    <div class="modal-content">
+      <p id="modalText"></p>
+      <div class="modal-btns">
+        <button class="btn-yes" onclick="handleChoice('yes')">네, 연장할게요!</button>
+        <button class="btn-no" onclick="handleChoice('no')">아니요, 괜찮아요</button>
+        <button class="btn-maybe" onclick="handleChoice('maybe')">조금 더 고민해볼게요</button>
+      </div>
+    </div>
   </div>
 
   <script>
-    const scriptUrl = 'https://script.google.com/macros/s/AKfycbweNqZrvKYvJ2R2u34TK6oFcVbcN909A3mq3rkyCKjzjiEEf6LIaVn-3GyVlnw4DCAYaQ/exec';
-  
+    const scriptUrl = 'https://script.google.com/macros/s/여기에_본인의_스크립트_ID_입력/exec';
+    let currentUserName = "";
+
     document.getElementById('attendBtn').addEventListener('click', async () => {
-      const nameInput = document.getElementById('userName');
-      const name = nameInput.value.trim();
-      const resultDiv = document.getElementById('resultMessage');
-  
+      const name = document.getElementById('userName').value.trim();
       if (!name) { alert('성함을 입력해 주세요!'); return; }
-  
-      // UI 초기화
+      currentUserName = name;
+
+      const resultDiv = document.getElementById('resultMessage');
       resultDiv.style.display = 'block';
-      resultDiv.className = 'status-normal';
-      resultDiv.innerHTML = '⏳ 기록 중입니다...';
-  
-      const now = new Date();
-      const timeStr = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()} ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
-  
+      resultDiv.innerText = '⏳ 기록 중입니다...';
+
       try {
-        // 1. mode: 'no-cors'를 삭제해야 서버의 응답(JSON)을 읽을 수 있습니다.
-        const response = await fetch(scriptUrl, { 
-          method: 'POST', 
-          body: JSON.stringify({ name: name }) 
-        });
-  
-        const result = await response.json(); // 서버에서 보낸 JSON 데이터를 받음
-  
+        const response = await fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ name: name }) });
+        const result = await response.json();
+
         if (result.success) {
-          let messageHtml = `✅ <strong>${name}</strong>님, 출석 완료!<br>오늘도 즐거운 시간 되세요!`;
+          resultDiv.innerHTML = `✅ ${name}님 출석 완료!`;
           
-          // 2. 서버에서 보낸 안내 메시지(잔여 횟수 알림 등)가 있다면 추가
-          if (result.message) {
-            messageHtml += `<br><span style="color: #E11D48; font-weight: 800;">⚠️ ${result.message}</span>`;
+          // 잔여 횟수에 따른 팝업 로직
+          if (result.remaining === 2) {
+            showModal(`반가워요, ${name}님! 🌸<br>앞으로 <strong>2회</strong>의 잔여 회차가 남았습니다.<br>미리 연장하시겠습니까?`);
+          } else if (result.remaining === 1) {
+            showModal(`반가워요, ${name}님! 🌸<br>앞으로 <strong>1회</strong>의 잔여 회차가 남았습니다.<br>미리 연장하시겠습니까?`);
+          } else if (result.remaining <= 0) {
+            alert(`${name}님, 모든 회차를 소모하셨습니다. 감사합니다!`);
           }
-  
-          messageHtml += `<br><span class="time-info">🕒 일시: ${timeStr}</span>`;
-          
-          resultDiv.innerHTML = messageHtml;
-          nameInput.value = '';
-        } else {
-          resultDiv.innerText = '❌ 오류: ' + (result.error || '기록에 실패했습니다.');
+          document.getElementById('userName').value = '';
         }
       } catch (e) {
-        console.error(e);
-        resultDiv.innerText = '❌ 서버 연결 오류가 발생했습니다.';
+        resultDiv.innerText = '❌ 오류가 발생했습니다.';
       }
     });
+
+    function showModal(text) {
+      document.getElementById('modalText').innerHTML = text;
+      document.getElementById('infoModal').style.display = 'flex';
+    }
+
+    async function handleChoice(choice) {
+      document.getElementById('infoModal').style.display = 'none';
+      if (choice === 'maybe') return; // 고민해볼게요는 시트 색상 변경 없음
+
+      // 서버로 사용자의 선택 전송 (시트 색상 변경용)
+      await fetch(scriptUrl, { 
+        method: 'POST', 
+        body: JSON.stringify({ name: currentUserName, action: choice }) 
+      });
+      alert('소중한 의견 감사합니다!');
+    }
   </script>
 </body>
 </html>
